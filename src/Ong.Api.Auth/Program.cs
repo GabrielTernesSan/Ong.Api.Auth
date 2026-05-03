@@ -1,12 +1,12 @@
-using MediatR;
 using MassTransit;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using OpenTelemetry.Metrics;
+using Microsoft.OpenApi;
 using Ong.Application;
 using Ong.Application.Requests;
 using Ong.Infra;
+using OpenTelemetry.Metrics;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
