@@ -27,9 +27,12 @@ namespace Ong.Application.Handlers
                 return response;
             }
 
+            if (!Enum.TryParse<ERole>(request.Role, out _))
+                return response.AddError($"Role inválida. Valores permitidos: {string.Join(", ", Enum.GetNames<ERole>())}.");
+
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
-            var user = new User(Guid.NewGuid(), request.Name, request.Email, passwordHash, ERole.Doador.ToString());
+            var user = new User(Guid.NewGuid(), request.Name, request.Email, passwordHash, request.Role);
 
             await _userRepository.CreateAsync(user);
 
