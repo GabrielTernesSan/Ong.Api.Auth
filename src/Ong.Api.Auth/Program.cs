@@ -3,8 +3,10 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Ong.Api.Auth.Extensions;
 using Ong.Application;
 using Ong.Application.Requests;
+using Ong.Domain.Queries;
 using Ong.Infra;
 using OpenTelemetry.Metrics;
 using System.Text;
@@ -32,6 +34,13 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ong Auth API", Version = "v1" });
 });
 
+var jwtKey = builder.Configuration["Jwt:Key"]
+    ?? throw new InvalidOperationException("Configuração Jwt:Key não encontrada.");
+var jwtIssuer = builder.Configuration["Jwt:Issuer"]
+    ?? throw new InvalidOperationException("Configuração Jwt:Issuer não encontrada.");
+var jwtAudience = builder.Configuration["Jwt:Audience"]
+    ?? throw new InvalidOperationException("Configuração Jwt:Audience não encontrada.");
+
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
@@ -41,9 +50,9 @@ builder.Services.AddAuthentication("Bearer")
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
         };
     });
 
@@ -72,5 +81,24 @@ app.MapPost("/auth/login", async ([FromBody] LoginRequest request, IMediator med
     var result = await mediator.Send(request);
     return result.HasErrors ? Results.Unauthorized() : Results.Ok(result);
 }).WithTags("Auth");
+
+app.MapGet("/auth/outbox", async ([FromServices] IOutboxMessageQuery query) =>
+{
+    var messages = await query.ObterOutboxMessagesPendentesAsync();
+    return messages;
+}).RequireApiKey();
+
+app.MapPatch("/auth/outbox/{id}/processed", async (Guid id, [FromBody] DateTime processedTime, IMediator mediator) =>
+{
+    var result = await mediator.Send(new UpdateOutboxRequest() { Id = id, ProcessedOn = processedTime });
+    return result.HasErrors ? Results.BadRequest(result) : Results.Ok(result);
+}).RequireApiKey();
+
+app.MapPatch("/auth/outbox/{id}/error", async (Guid id, [FromBody] UpdateOutboxRequest request, IMediator mediator) =>
+{
+    request.Id = id;
+    var result = await mediator.Send(request);
+    return result.HasErrors ? Results.BadRequest(result) : Results.Ok(result);
+}).RequireApiKey();
 
 app.Run();

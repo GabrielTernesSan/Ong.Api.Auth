@@ -35,7 +35,7 @@ namespace Ong.Infra.Repositories
                 : new User(entity.Id, entity.Name, entity.Email, entity.PasswordHash, entity.Role);
         }
 
-        public async Task CreateAsync(User user)
+        public async Task CreateAsync(User user, CancellationToken cancellationToken)
         {
             var entity = new Tables.User
             {
@@ -46,9 +46,7 @@ namespace Ong.Infra.Repositories
                 Role = user.Role
             };
 
-            _context.Users.Add(entity);
-
-            await _context.SaveChangesAsync();
+            await _context.Users.AddAsync(entity, cancellationToken);
         }
     }
 }
