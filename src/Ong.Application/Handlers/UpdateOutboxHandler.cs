@@ -28,10 +28,10 @@ namespace Ong.Application.Handlers
                 return response;
             }
 
-            message.UpdateProcessedTime(request.ProcessedOn);
-
             if (request.Error != null)
                 message.ErrorOccurred(request.Error);
+            else
+                message.UpdateProcessedTime(DateTime.UtcNow);
 
             await _repository.UpdateAsync(message, cancellationToken);
 

@@ -8,8 +8,6 @@ namespace Ong.Application.Requests
     {
         [JsonIgnore]
         public Guid Id { get; set; }
-        [JsonIgnore]
-        public DateTime ProcessedOn { get; set; }
         public string? Error { get; set; }
     }
 }

@@ -23,7 +23,8 @@ namespace Ong.Infra.Repositories
                                      o.Payload,
                                      o.CreatedOn,
                                      o.ProcessedOn,
-                                     o.Error)).FirstOrDefaultAsync();
+                                     o.Error,
+                                     o.RetryCount)).FirstOrDefaultAsync();
         }
 
         public async Task CreateAsync(OutboxMessage message, CancellationToken cancellationToken)

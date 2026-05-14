@@ -6,11 +6,11 @@
         public string Type { get; private set; }
         public string Payload { get; private set; }
         public DateTime CreatedOn { get; private set; }
-        public int RetryCount { get; private set; } = 0;
+        public int RetryCount { get; private set; }
         public DateTime? ProcessedOn { get; set; }
         public string? Error { get; set; }
 
-        public OutboxMessage(Guid id, string type, string payload, DateTime createdOn, DateTime? processedOn = null, string? error = null)
+        public OutboxMessage(Guid id, string type, string payload, DateTime createdOn, DateTime? processedOn = null, string? error = null, int retryCount = 0)
         {
             Id = id;
             Type = type;
@@ -18,7 +18,7 @@
             CreatedOn = createdOn;
             ProcessedOn = processedOn;
             Error = error;
-
+            RetryCount = retryCount;
         }
 
         public void UpdateProcessedTime(DateTime processedOn) =>
