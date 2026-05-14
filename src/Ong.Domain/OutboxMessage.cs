@@ -6,6 +6,7 @@
         public string Type { get; private set; }
         public string Payload { get; private set; }
         public DateTime CreatedOn { get; private set; }
+        public int RetryCount { get; private set; } = 0;
         public DateTime? ProcessedOn { get; set; }
         public string? Error { get; set; }
 
@@ -17,11 +18,15 @@
             CreatedOn = createdOn;
             ProcessedOn = processedOn;
             Error = error;
+
         }
 
-        public void Update(DateTime processedOn, string? error = null)
-        {
+        public void UpdateProcessedTime(DateTime processedOn) =>
             ProcessedOn = processedOn;
+
+        public void ErrorOccurred(string error)
+        {
+            RetryCount++;
             Error = error;
         }
     }

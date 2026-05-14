@@ -88,9 +88,9 @@ app.MapGet("/auth/outbox", async ([FromServices] IOutboxMessageQuery query) =>
     return messages;
 }).RequireApiKey();
 
-app.MapPatch("/auth/outbox/{id}/processed", async (Guid id, [FromBody] DateTime processedTime, IMediator mediator) =>
+app.MapPatch("/auth/outbox/{id}/processed", async (Guid id, IMediator mediator) =>
 {
-    var result = await mediator.Send(new UpdateOutboxRequest() { Id = id, ProcessedOn = processedTime });
+    var result = await mediator.Send(new UpdateOutboxRequest() { Id = id, ProcessedOn = DateTime.Now });
     return result.HasErrors ? Results.BadRequest(result) : Results.Ok(result);
 }).RequireApiKey();
 

@@ -22,6 +22,10 @@ namespace Ong.Infra.Tables.Mapping
             builder.Property(u => u.CreatedOn)
                    .IsRequired();
 
+            builder.Property(u => u.RetryCount)
+                   .IsRequired()
+                   .HasDefaultValue(0);
+
             builder.Property(u => u.ProcessedOn)
                    .IsRequired(false);
 

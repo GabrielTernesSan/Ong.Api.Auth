@@ -16,7 +16,7 @@ namespace Ong.Infra.Queries
         public async Task<IEnumerable<OutboxMessageResponse>> ObterOutboxMessagesPendentesAsync()
         {
             return await _context.OutboxMessages
-                .Where(m => m.ProcessedOn == null || m.Error != null)
+                .Where(m => m.ProcessedOn == null && m.RetryCount < 3)
                 .Select(m => new OutboxMessageResponse
                 {
                     Id = m.Id,

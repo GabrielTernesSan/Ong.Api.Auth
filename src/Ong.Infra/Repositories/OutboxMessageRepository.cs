@@ -48,6 +48,7 @@ namespace Ong.Infra.Repositories
 
             entity.ProcessedOn = message.ProcessedOn;
             entity.Error = message.Error;
+            entity.RetryCount = message.RetryCount;
         }
     }
 }
