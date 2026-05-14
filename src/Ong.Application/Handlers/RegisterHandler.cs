@@ -4,16 +4,21 @@ using Ong.Commom;
 using Ong.Domain;
 using Ong.Domain.Enums;
 using Ong.Domain.Repositories;
+using System.Text.Json;
 
 namespace Ong.Application.Handlers
 {
     public class RegisterHandler : IRequestHandler<RegisterRequest, Response>
     {
         private readonly IUserRepository _userRepository;
+        private readonly IOutboxMessageRepository _outboxRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RegisterHandler(IUserRepository userRepository)
+        public RegisterHandler(IUserRepository userRepository, IOutboxMessageRepository outboxRepository, IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
+            _outboxRepository = outboxRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Response> Handle(RegisterRequest request, CancellationToken cancellationToken)
@@ -34,7 +39,20 @@ namespace Ong.Application.Handlers
 
             var user = new User(Guid.NewGuid(), request.Name, request.Email, passwordHash, request.Role);
 
-            await _userRepository.CreateAsync(user);
+            var userCreatedEvent = new UserCreated(user.Id, user.Name, user.Email, user.PasswordHash, user.Role, DateTime.UtcNow);
+
+            var outboxMessage = new OutboxMessage(
+                Guid.NewGuid(),
+                typeof(UserCreated).Name!,
+                JsonSerializer.Serialize(userCreatedEvent),
+                DateTime.UtcNow
+            );
+
+            await _outboxRepository.CreateAsync(outboxMessage, cancellationToken);
+
+            await _userRepository.CreateAsync(user, cancellationToken);
+
+            await _unitOfWork.CommitAsync(cancellationToken);
 
             response.SetResult(new { user.Id, user.Name, user.Email, user.Role });
 

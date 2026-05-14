@@ -3,8 +3,10 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Ong.Api.Auth.Extensions;
 using Ong.Application;
 using Ong.Application.Requests;
+using Ong.Domain.Queries;
 using Ong.Infra;
 using OpenTelemetry.Metrics;
 using System.Text;
@@ -79,5 +81,24 @@ app.MapPost("/auth/login", async ([FromBody] LoginRequest request, IMediator med
     var result = await mediator.Send(request);
     return result.HasErrors ? Results.Unauthorized() : Results.Ok(result);
 }).WithTags("Auth");
+
+app.MapGet("/auth/outbox", async ([FromServices] IOutboxMessageQuery query) =>
+{
+    var messages = await query.ObterOutboxMessagesPendentesAsync();
+    return messages;
+}).RequireApiKey();
+
+app.MapPatch("/auth/outbox/{id}/processed", async (Guid id, [FromBody] DateTime processedTime, IMediator mediator) =>
+{
+    var result = await mediator.Send(new UpdateOutboxRequest() { Id = id, ProcessedOn = processedTime });
+    return result.HasErrors ? Results.BadRequest(result) : Results.Ok(result);
+}).RequireApiKey();
+
+app.MapPatch("/auth/outbox/{id}/error", async (Guid id, [FromBody] UpdateOutboxRequest request, IMediator mediator) =>
+{
+    request.Id = id;
+    var result = await mediator.Send(request);
+    return result.HasErrors ? Results.BadRequest(result) : Results.Ok(result);
+}).RequireApiKey();
 
 app.Run();

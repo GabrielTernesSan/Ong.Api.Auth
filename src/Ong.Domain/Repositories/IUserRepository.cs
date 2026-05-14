@@ -4,6 +4,6 @@ namespace Ong.Domain.Repositories
     {
         Task<User?> GetByEmailAsync(string email);
         Task<User?> GetByIdAsync(Guid id);
-        Task CreateAsync(User user);
+        Task CreateAsync(User user, CancellationToken cancellationToken);
     }
 }

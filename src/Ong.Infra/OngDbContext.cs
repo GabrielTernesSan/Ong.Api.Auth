@@ -9,6 +9,7 @@ namespace Ong.Infra
         public OngDbContext(DbContextOptions<OngDbContext> options) : base(options) { }
 
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<OutboxMessage> OutboxMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
