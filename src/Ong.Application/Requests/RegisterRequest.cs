@@ -1,14 +1,33 @@
+using FluentValidation;
 using MediatR;
 using Ong.Commom;
 using Ong.Domain.Enums;
+using System.Text.Json.Serialization;
 
-namespace Ong.Application.Requests
+namespace Ong.Application.Requests;
+
+public class RegisterRequest : IRequest<Response>
 {
-    public class RegisterRequest : IRequest<Response>
+    public string Name { get; set; } = null!;
+    public string Email { get; set; } = null!;
+    public string Password { get; set; } = null!;
+    [JsonIgnore]
+    public string Role { get; set; } = ERole.Doador.ToString();
+}
+
+public class RegisterRequestValidator : FluentValidation.AbstractValidator<RegisterRequest>
+{
+    public RegisterRequestValidator()
     {
-        public string Name { get; set; } = null!;
-        public string Email { get; set; } = null!;
-        public string Password { get; set; } = null!;
-        public string Role { get; set; } = ERole.Doador.ToString();
+        RuleFor(x => x.Name)
+            .NotNull().WithMessage("Nome é obrigatório.");
+
+        RuleFor(x => x.Email)
+            .NotNull().WithMessage("Email é obrigatório.")
+            .EmailAddress().WithMessage("Formato de email é inválido.");
+
+        RuleFor(x => x.Password)
+            .NotNull().WithMessage("Senha é obrigatória.")
+            .MinimumLength(6).WithMessage("A senha deve conter no mínimo 6 caracteres.");
     }
 }

@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Ong.Domain.Queries;
 using Ong.Domain.Repositories;
 using Ong.Domain.Services;
+using Ong.Infra.Queries;
 using Ong.Infra.Repositories;
 using Ong.Infra.Services;
 
@@ -18,6 +20,7 @@ namespace Ong.Infra
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IOutboxMessageRepository, OutboxMessageRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IOutboxMessageQuery, OutboxMessageQuery>();
 
             services.AddScoped<ITokenService, TokenService>();
 
