@@ -39,7 +39,7 @@ namespace Ong.Application.Handlers
 
             var user = new User(Guid.NewGuid(), request.Name, request.Email, passwordHash, request.Role);
 
-            var userCreatedEvent = new UserCreated(user.Id, user.Name, user.Email, user.PasswordHash, user.Role, DateTime.UtcNow);
+            var userCreatedEvent = new UserCreated(user.Id, user.Name, user.Email, DateTime.UtcNow);
 
             var outboxMessage = new OutboxMessage(
                 Guid.NewGuid(),
