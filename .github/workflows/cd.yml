@@ -3,7 +3,7 @@ name: CD - Ong.Api.Auth
 on:
   workflow_run:
     workflows: ["CI - Ong.Api.Auth"]
-    branches: [main]
+    branches: [main, master]
     types: [completed]
 
 env:
