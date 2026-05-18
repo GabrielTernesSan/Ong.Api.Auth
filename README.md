@@ -55,7 +55,7 @@ cd Ong.Api.Auth
 
 ### 2. Configure as variáveis de ambiente
 
-Crie o arquivo `src/Ong.Api.Auth/appsettings.Development.json` (ou use variáveis de ambiente):
+Configure o arquivo `src/Ong.Api.Auth/appsettings.Development.json` (ou use variáveis de ambiente)
 
 ### 3. Suba o banco via Docker
 
