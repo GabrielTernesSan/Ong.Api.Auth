@@ -21,7 +21,7 @@ namespace Ong.Infra.Repositories
 
             return entity == null
                 ? null
-                : new User(entity.Id, entity.Name, entity.Email, entity.PasswordHash, entity.Role);
+                : new User(entity.Id, entity.Name, entity.Email, entity.PasswordHash, entity.Cpf, entity.Role);
         }
 
         public async Task<User?> GetByIdAsync(Guid id)
@@ -32,7 +32,7 @@ namespace Ong.Infra.Repositories
 
             return entity == null
                 ? null
-                : new User(entity.Id, entity.Name, entity.Email, entity.PasswordHash, entity.Role);
+                : new User(entity.Id, entity.Name, entity.Email, entity.PasswordHash, entity.Cpf, entity.Role);
         }
 
         public async Task CreateAsync(User user, CancellationToken cancellationToken)
@@ -43,6 +43,7 @@ namespace Ong.Infra.Repositories
                 Name = user.Name,
                 Email = user.Email,
                 PasswordHash = user.PasswordHash,
+                Cpf = user.Cpf,
                 Role = user.Role
             };
 

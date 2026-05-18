@@ -21,6 +21,10 @@ namespace Ong.Infra.Tables.Mapping
                 .IsRequired()
                 .HasMaxLength(100);
 
+            builder.Property(u => u.Cpf)
+                   .IsRequired()
+                   .HasMaxLength(11);
+
             builder.Property(x => x.PasswordHash).IsRequired();
 
             builder.Property(x => x.Role)

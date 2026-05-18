@@ -10,6 +10,7 @@ public class RegisterRequest : IRequest<Response>
 {
     public string Name { get; set; } = null!;
     public string Email { get; set; } = null!;
+    public string Cpf { get; set; } = null!;
     public string Password { get; set; } = null!;
     [JsonIgnore]
     public string Role { get; set; } = ERole.Doador.ToString();
@@ -25,6 +26,10 @@ public class RegisterRequestValidator : FluentValidation.AbstractValidator<Regis
         RuleFor(x => x.Email)
             .NotNull().WithMessage("Email é obrigatório.")
             .EmailAddress().WithMessage("Formato de email é inválido.");
+
+        RuleFor(x => x.Cpf)
+            .NotNull().WithMessage("CPF é obrigatório.")
+            .WithMessage("Formato de CPF é inválido.");
 
         RuleFor(x => x.Password)
             .NotNull().WithMessage("Senha é obrigatória.")

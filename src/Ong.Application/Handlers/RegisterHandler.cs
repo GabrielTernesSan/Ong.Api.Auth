@@ -37,7 +37,7 @@ namespace Ong.Application.Handlers
 
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
-            var user = new User(Guid.NewGuid(), request.Name, request.Email, passwordHash, request.Role);
+            var user = new User(Guid.NewGuid(), request.Name, request.Email, passwordHash, request.Cpf, request.Role);
 
             var userCreatedEvent = new UserCreated(user.Id, user.Name, user.Email, DateTime.UtcNow);
 
@@ -54,7 +54,7 @@ namespace Ong.Application.Handlers
 
             await _unitOfWork.CommitAsync(cancellationToken);
 
-            response.SetResult(new { user.Id, user.Name, user.Email, user.Role });
+            response.SetResult(new { user.Id, user.Name, user.Email, user.Cpf, user.Role });
 
             return response;
         }
