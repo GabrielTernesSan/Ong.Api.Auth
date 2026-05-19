@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ong-api-auth
+  labels:
+    app: ong-api-auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ong-api-auth
+  template:
+    metadata:
+      labels:
+        app: ong-api-auth
+    spec:
+      containers:
+      - name: ong-api-auth
+        image: ong-api-auth:1.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: ConnectionStrings__DefaultConnection
+          value: Host=postgres;Port=5432;Database=ong_auth;Username=postgres;Password=postgres
+        - name: Jwt__Key
+          value: SuperSecretPasswordKeyWithExtraLengthForSecurity123!
+        - name: Jwt__Issuer
+          value: Ong.Api.Auth
+        - name: Jwt__Audience
+          value: Ong.Api
+        - name: Jwt__ExpireHours
+          value: "2"
+        - name: ApiKeys__WorkerApiKey
+          value: "LocalDevApiKey123!"
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ong-api-auth
+  labels:
+    app: ong-api-auth
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30080
+    name: http
+  selector:
+    app: ong-api-auth
