@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: ong-api-auth
-        image: ong-api-auth:1.0.0
+        image: ong-api-auth:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
