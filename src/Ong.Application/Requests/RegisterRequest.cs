@@ -1,6 +1,7 @@
 using FluentValidation;
 using MediatR;
 using Ong.Commom;
+using Ong.Domain;
 using Ong.Domain.Enums;
 using System.Text.Json.Serialization;
 
@@ -28,8 +29,8 @@ public class RegisterRequestValidator : FluentValidation.AbstractValidator<Regis
             .EmailAddress().WithMessage("Formato de email é inválido.");
 
         RuleFor(x => x.Cpf)
-            .NotNull().WithMessage("CPF é obrigatório.")
-            .WithMessage("Formato de CPF é inválido.");
+            .NotEmpty().WithMessage("CPF é obrigatório.")
+            .Must(CpfHelper.IsValid).WithMessage("CPF inválido.");
 
         RuleFor(x => x.Password)
             .NotNull().WithMessage("Senha é obrigatória.")

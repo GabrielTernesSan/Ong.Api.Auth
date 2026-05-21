@@ -1,3 +1,4 @@
+using FluentValidation;
 using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -72,8 +73,18 @@ app.UseOpenTelemetryPrometheusScrapingEndpoint("/metrics");
 
 app.MapPost("/auth/register", async ([FromBody] RegisterRequest request, IMediator mediator) =>
 {
-    var result = await mediator.Send(request);
-    return result.HasErrors ? Results.BadRequest(result) : Results.Ok(result);
+    try
+    {
+        var result = await mediator.Send(request);
+        return result.HasErrors ? Results.BadRequest(result) : Results.Ok(result);
+    }
+    catch (ValidationException ex)
+    {
+        var response = new Ong.Commom.Response();
+        foreach (var error in ex.Errors)
+            response.AddError(error.ErrorMessage);
+        return Results.BadRequest(response);
+    }
 }).WithTags("Auth");
 
 app.MapPost("/auth/login", async ([FromBody] LoginRequest request, IMediator mediator) =>

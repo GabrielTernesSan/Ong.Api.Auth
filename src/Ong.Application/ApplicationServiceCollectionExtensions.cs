@@ -12,7 +12,7 @@ namespace Ong.Application
             services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(typeof(ApplicationServiceCollectionExtensions).Assembly));
 
-            //services.AddValidatorsFromAssembly(typeof(ApplicationServiceCollectionExtensions).Assembly);
+            services.AddValidatorsFromAssembly(typeof(ApplicationServiceCollectionExtensions).Assembly);
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 

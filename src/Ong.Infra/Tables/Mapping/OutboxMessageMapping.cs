@@ -20,6 +20,7 @@ namespace Ong.Infra.Tables.Mapping
                 .IsRequired();
 
             builder.Property(u => u.CreatedOn)
+                   .HasColumnName("OccurredOn")
                    .IsRequired();
 
             builder.Property(u => u.RetryCount)

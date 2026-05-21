@@ -35,6 +35,18 @@ namespace Ong.Infra.Repositories
                 : new User(entity.Id, entity.Name, entity.Email, entity.PasswordHash, entity.Cpf, entity.Role);
         }
 
+        public async Task<User?> GetByCpfAsync(string cpf)
+        {
+            var normalizedCpf = new string(cpf.Where(char.IsDigit).ToArray());
+            var entity = await _context.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Cpf == normalizedCpf);
+
+            return entity == null
+                ? null
+                : new User(entity.Id, entity.Name, entity.Email, entity.PasswordHash, entity.Cpf, entity.Role);
+        }
+
         public async Task CreateAsync(User user, CancellationToken cancellationToken)
         {
             var entity = new Tables.User

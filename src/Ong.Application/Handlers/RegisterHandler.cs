@@ -32,6 +32,13 @@ namespace Ong.Application.Handlers
                 return response;
             }
 
+            var existingUserByCpf = await _userRepository.GetByCpfAsync(request.Cpf);
+            if (existingUserByCpf is not null)
+            {
+                response.AddError("Já existe um usuário com este CPF.");
+                return response;
+            }
+
             if (!Enum.TryParse<ERole>(request.Role, out _))
                 return response.AddError($"Role inválida. Valores permitidos: {string.Join(", ", Enum.GetNames<ERole>())}.");
 
@@ -54,7 +61,7 @@ namespace Ong.Application.Handlers
 
             await _unitOfWork.CommitAsync(cancellationToken);
 
-            response.SetResult(new { user.Id, user.Name, user.Email, user.Cpf, user.Role });
+            response.SetResult(new { user.Id, user.Name, user.Email, CpfMascarado = user.MaskedCpf, user.Role });
 
             return response;
         }

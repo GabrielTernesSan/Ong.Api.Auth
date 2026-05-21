@@ -21,6 +21,8 @@ namespace Ong.Infra.Tables.Mapping
                 .IsRequired()
                 .HasMaxLength(100);
 
+            builder.HasIndex(x => x.Cpf).IsUnique();
+
             builder.Property(u => u.Cpf)
                    .IsRequired()
                    .HasMaxLength(11);
